@@ -1,5 +1,5 @@
 const request = require('supertest');
-
+const assert = require('assert');
 const app = require('../src/server');
 
 describe('Testing /auth endpoint', function() {
