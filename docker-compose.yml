@@ -1,14 +1,40 @@
 version: "3.2"
 services:
+  db:
+    image: mysql:5.7
+    container_name: db-container
+    restart: always
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+      - MYSQL_DATABASE=$DB_NAME
+      - MYSQL_USER=$DB_USERNAME
+      - MYSQL_PASSWORD=$DB_PASSWORD
+    ports:
+      - 3307:3306
+    expose:
+      - 3307
+    volumes:
+      - ./sqlFiles:/docker-entrypoint-initdb.d
   app:
+    depends_on:
+      - mysqldb
+    container_name: app-container
     command: node src/server.js
     build:
       context: .
       dockerfile: Dockerfile
+    env_file: ./.env
     ports:
       - published: ${APP_PORT:-3000}
         target: 3000
     volumes:
       - .:/app/
     environment:
-      JWT_SECRET: ${JWT_SECRET}
+      - DB_HOSTNAME = $DB_HOSTNAME
+      - DB_PORT = $DB_PORT
+      - DB_USERNAME = $DB_USERNAME
+      - DB_PASSWORD = $DB_PASSWORD
+      - DB_NAME = $DB_NAME
+      - JWT_SECRET = $JWT_SECRET
+      - APP_PORT = $APP_PORT

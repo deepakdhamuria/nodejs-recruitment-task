@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "dev": "set JWT_SECRET=MyS3cr3tK3y&& set OMBD_API_KEY=dd57a11f&& node ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "",
   "dependencies": {
+    "axios": "^0.27.2",
     "body-parser": "1.19.0",
     "express": "4.17.1",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1"
   }
 }

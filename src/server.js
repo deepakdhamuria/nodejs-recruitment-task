@@ -38,6 +38,8 @@ app.post("/auth", (req, res, next) => {
   }
 });
 
+app.use("/movies", require("./movies/moviesRoute"));
+
 app.use((error, _, res, __) => {
   console.error(
     `Error processing request ${error}. See next message for details`
