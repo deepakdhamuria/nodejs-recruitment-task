@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  JWT_SECRET: MyS3cr3tK3y
+  OMBD_API_KEY: dd57a11f
+
 jobs:
   build:
 
