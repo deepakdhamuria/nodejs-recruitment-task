@@ -13,10 +13,11 @@ describe('Testing /auth endpoint', function() {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200)
-      .end(function(err, res) {
-        if (err) return done(err);
-        return done();
-      });
+      .then(response => {
+        assert(response.body.token);
+        done();
+      })
+      .catch(err => done(err));
   });
 });
 
