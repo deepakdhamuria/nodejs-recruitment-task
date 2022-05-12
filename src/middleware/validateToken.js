@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const { JWT_SECRET } = process.env;
 
-const authValidate = (req, res, next) => {
+const validateToken = (req, res, next) => {
     
     if (!req.headers["authorization"]) {
         return res.status(401).send({error: 'Missing Authorization tokens'});
@@ -16,10 +16,10 @@ const authValidate = (req, res, next) => {
             const decoded = jwt.verify(token, JWT_SECRET);
             req.user = decoded;
         } catch (err) {
-            return res.status(401).send("Invalid Token");
+            return res.status(401).send({error: 'Invalid Token'});
         }
         return next();
     }
 };
 
-module.exports = authValidate;
+module.exports = validateToken;

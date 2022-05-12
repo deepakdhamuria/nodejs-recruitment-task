@@ -1,0 +1,328 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Node.js recruitment task",
+    "description": "A simple Movie API with GET and POST",
+    "contact": {
+      "name": "Deepak Dhamuria",
+      "url": "https://www.deepakdhamuria.com",
+      "email": "deepak.dhamuria@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Missing Authorization tokens"
+      }
+    },
+    "schemas": {
+      "AuthenticateRequestBody": {
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "AddMovieRequestBody": {
+        "properties": {
+          "movieID": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "movieID"
+        ]
+      },
+      "AuthenticateResponse": {
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "AddMovieResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "release_date": {
+            "type": "string"
+          },
+          "director": {
+            "type": "string"
+          },
+          "genre": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchMoviesResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/SearchResultObject"
+        }
+      },
+      "GetMoviesResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/MovieObject"
+        }
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchResultObject": {
+        "properties": {
+          "Title": {
+            "type": "string"
+          },
+          "Year": {
+            "type": "string"
+          },
+          "imdbID": {
+            "type": "string"
+          },
+          "Type": {
+            "type": "string"
+          },
+          "Poster": {
+            "type": "string"
+          }
+        }
+      },
+      "MovieObject": {
+        "properties": {
+          "movie_id": {
+            "type": "number"
+          },
+          "creator_id": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "release_date": {
+            "type": "string"
+          },
+          "genre": {
+            "type": "string"
+          },
+          "director": {
+            "type": "string"
+          },
+          "created_date": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Docker container"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "summary": "Authenticate user",
+        "description": "Authenticate the user using username and password",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateRequestBody"
+              },
+              "example": {
+                "username": "basic-thomas",
+                "password": "sR-_pcoow-27-6PAwCD8"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User details with access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticateResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Failed authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "invalid username or password"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies/search": {
+      "get": {
+        "summary": "Search movie",
+        "description": "Search a movie by title",
+        "tags": [
+          "Movies"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "title",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of movies based on title",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchMoviesResponse"
+                },
+                "example": {
+                  "Title": "Spider-Man: Homecoming",
+                  "Year": "2017",
+                  "imdbID": "tt2250912",
+                  "Type": "movie",
+                  "Poster": "https://m.media-amazon.com/images/M/MV5BNTk4ODQ1MzgzNl5BMl5BanBnXkFtZTgwMTMyMzM4MTI@._V1_SX300.jpg"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get movies",
+        "description": "Get movies added by an user",
+        "tags": [
+          "Movies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched user(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMoviesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Invalid Token"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Add Movie",
+        "description": "Add a movie",
+        "tags": [
+          "Movies"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddMovieRequestBody"
+              },
+              "example": {
+                "movieID": "tt2250912"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddMovieResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Invalid Token"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

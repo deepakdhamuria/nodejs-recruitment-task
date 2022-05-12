@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { authFactory, AuthError } = require("./auth");
 
-const PORT = 3000;
+const PORT = process.env.APP_PORT;
 const { JWT_SECRET } = process.env;
 
 if (!JWT_SECRET) {
@@ -11,6 +11,9 @@ if (!JWT_SECRET) {
 
 const auth = authFactory(JWT_SECRET);
 const app = express();
+
+const swaggerUi = require('swagger-ui-express'),
+    swaggerDocument = require('./swagger.json');
 
 app.use(bodyParser.json());
 
@@ -38,7 +41,11 @@ app.post("/auth", (req, res, next) => {
   }
 });
 
+//Routes for /movies micro service
 app.use("/movies", require("./movies/moviesRoute"));
+
+//Routes for Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((error, _, res, __) => {
   console.error(
@@ -52,3 +59,5 @@ app.use((error, _, res, __) => {
 app.listen(PORT, () => {
   console.log(`auth svc running at port ${PORT}`);
 });
+
+module.exports = app
