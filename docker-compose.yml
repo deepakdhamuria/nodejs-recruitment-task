@@ -20,7 +20,7 @@ services:
     depends_on:
       - mysqldb
     container_name: app-container
-    command: node src/server.js
+    command: node src/app.js
     build:
       context: .
       dockerfile: Dockerfile
